@@ -1,3 +1,5 @@
+import http from "http";
+
 import req from "./request";
 import res from "./response";
 import application from "./application";
@@ -22,6 +24,11 @@ const createApplication = () => {
             value: app,
         },
     });
+
+    app.listen = (...argv) => {
+        const server = http.createServer(app);
+        return server.listen.apply(server, argv);
+    };
 
     return app;
 };
