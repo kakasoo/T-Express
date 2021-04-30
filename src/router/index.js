@@ -1,5 +1,9 @@
+import Route from "./route";
+
 class Router {
-    constructor(option) {}
+    constructor(option) {
+        this.route = new Route();
+    }
 }
 
-export default Route;
+export default Router;
