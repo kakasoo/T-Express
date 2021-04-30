@@ -6,4 +6,4 @@ class Request extends http.IncomingMessage {
     }
 }
 
-export default new Request();
+export default Request;

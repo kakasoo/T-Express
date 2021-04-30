@@ -6,4 +6,4 @@ class Response extends http.ServerResponse {
     }
 }
 
-export default new Response();
+export default Response;

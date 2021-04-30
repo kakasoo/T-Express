@@ -2,7 +2,7 @@
     "name": "t-express",
     "version": "1.0.0",
     "description": "ES6 style of express.js",
-    "main": "index.js",
+    "main": "./dist/index.js",
     "scripts": {
         "prestart": "babel src -d dist",
         "start": "node dist/index.js"
