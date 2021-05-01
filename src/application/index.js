@@ -1,15 +1,29 @@
-import { METHODS } from "http";
+// import { METHODS } from "http";
+const METHODS = ["GET"];
 import { flat, slice } from "../util";
 
 class Route {
     constructor(path) {
         this.path = path;
         this.stack = [];
+        this.methods = {};
 
         METHODS.forEach((METHOD) => {
             const method = METHOD.toLowerCase();
-            this[method] = (...params) => {
-                console.log("params : ", params);
+            this[method] = (...handles) => {
+                for (let i = 0; i < handles.length; i++) {
+                    const handle = handles[i];
+
+                    if (typeof handle !== "function") {
+                        throw new Error("Route's handle error!");
+                    }
+
+                    const layer = new Layer("/", handle, {});
+                    layer.method = method;
+
+                    this.methods[method] = true;
+                    this.stack.push(layer);
+                }
             };
         });
     }
@@ -18,7 +32,7 @@ class Route {
 class Layer {
     constructor(path, route, option) {
         this.path = path;
-        this.methods = [];
+        this.methods = {};
         this.route = route;
     }
 
@@ -52,11 +66,15 @@ class Application {
         METHODS.forEach((METHOD) => {
             const method = METHOD.toLowerCase();
             this[method] = (path, fn) => {
-                fn(this.request, this.response);
+                // TODO : Router 당 1개의 path만 저장되는 문제가 발생.
+                // this.router = new Router();
+                if (!this.router) {
+                    this.router = new Router();
+                }
 
-                this.router = new Router();
                 const route = this.router.route(path);
-                console.log("route : ", route);
+
+                // app.get('/', () => {}); 에서 첫 매개변수인 path를 제거한 것.
                 route[method].apply(route, slice.call(arguments, 1));
                 return this;
             };
