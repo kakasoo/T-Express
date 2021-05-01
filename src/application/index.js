@@ -82,7 +82,6 @@ class Application {
     }
 
     init() {}
->>>>>>> e58b173c0e560adb5aed8cfaa0cefd7f34756d4d
 }
 
 export default Application;
