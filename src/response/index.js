@@ -5,7 +5,9 @@ class Response extends http.ServerResponse {
         super();
     }
 
-    send(body) {}
+    send(body) {
+        console.log("body : ", body);
+    }
 }
 
 export default Response;
