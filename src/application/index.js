@@ -137,6 +137,8 @@ class Router {
 
 class Application {
     constructor() {
+        Object.assign(this, EventEmitter.prototype); // HTTP event를 감지하기 위함.
+
         METHODS.forEach((METHOD) => {
             const method = METHOD.toLowerCase();
             this[method] = (path, fn) => {
