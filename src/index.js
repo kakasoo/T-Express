@@ -1,11 +1,10 @@
-import http from "http";
-
 import Req from "./request";
 import Res from "./response";
 import Application from "./application";
 
+import { printMessage } from "./util";
+
 const createApplication = () => {
-    // const app = Object.create(Application.prototype);
     const app = new Application();
 
     // req는 감쳐진 속성으로 존재하는 아래 app 객체를 생성한다.
@@ -27,21 +26,7 @@ const createApplication = () => {
         },
     });
 
-    app.listen = (...argv) => {
-        const server = http.createServer(app);
-        return server.listen.apply(server, argv);
-    };
-
     return app;
 };
-
-const app = createApplication();
-const PORT = 3000;
-
-app.get("/test", (req, res, next) => {
-    res.send("hi");
-});
-
-app.listen(PORT, () => console.log("Server is listenning."));
 
 export default createApplication;
