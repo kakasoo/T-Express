@@ -1,5 +1,8 @@
 // import { METHODS } from "http";
+import http from "http";
 const METHODS = ["GET"];
+import finalhandler from "finalhandler";
+import { EventEmitter } from "events";
 import { flat, slice } from "../util";
 
 class Route {
@@ -155,9 +158,38 @@ class Application {
                 return this;
             };
         });
+        this.init();
     }
 
-    init() {}
+    init() {
+        this.set("env", process.env.NODE_ENV || "development");
+    }
+
+    set(key, value) {
+        this[key] = value;
+    }
+
+    handle(req, res, callback) {
+        const router = this.router;
+        const done =
+            callback ||
+            finalhandler(req, res, {
+                env: this.get("env"),
+                onerror: logerror.bind(this),
+            });
+
+        if (!router) {
+            done();
+            return;
+        }
+
+        router.handle(req, res, done);
+    }
+
+    listen(...argv) {
+        const server = http.createServer(this);
+        return server.listen.apply(server, argv);
+    }
 }
 
 export default Application;
