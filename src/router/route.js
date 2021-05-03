@@ -7,6 +7,8 @@ class Route {
         this.methods = {};
         METHODS.forEach((METHOD) => {
             const method = METHOD.toLowerCase();
+
+            // route에서 메서드 단위로 함수를 등록하는 일
             this[method] = (...handles) => {
                 for (let i = 0; i < handles.length; i++) {
                     const handle = handles[i];
@@ -21,6 +23,7 @@ class Route {
                     this.methods[method] = true;
                     this.stack.push(layer);
                 }
+
                 return this;
             };
         });

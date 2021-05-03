@@ -3,11 +3,14 @@ import Res from "./response";
 import Application from "./application";
 
 import { printMessage } from "./util";
+import { EventEmitter } from "events";
 
 const createApplication = () => {
+    // TODO : 이벤트 발생 시 app 함수를 실행시키는 효과 (아마도 app.listen에 비밀이 있다.)
     const app = function (req, res, next) {
         app.handle(req, res, next);
     };
+    // const app = {};
 
     Object.assign(app, Application.prototype);
     Object.assign(app, EventEmitter.prototype);
@@ -40,3 +43,15 @@ const createApplication = () => {
 };
 
 export default createApplication;
+
+const app = createApplication();
+
+app.get("/", (req, res, next) => {
+    res.send("hi!");
+});
+
+app.get("/test", (req, res, next) => {
+    res.send("hi!");
+});
+
+app.listen(3000);

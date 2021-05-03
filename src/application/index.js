@@ -10,16 +10,20 @@ class Application {
         this.setting = {};
         this.set("env", process.env.NODE_ENV || "development");
 
+        // TODO : 이 콜백함수를 별도로 저장하여, HTTP 메서드 확장이 가능하도록 한다.
         METHODS.forEach((METHOD) => {
             const method = METHOD.toLowerCase();
-            this[method] = (path, fn) => {
-                // TODO : Router 당 1개의 path만 저장되는 문제가 발생.
-                // this.router = new Router();
 
+            // 각 메서드 별로 함수를 등록하는 구간
+            this[method] = (path, fn) => {
+                // 아래는 등록되어 있는 함수
+
+                // ex) app.get(path, fn)이 실제로 아래처럼 실행되게 되어 있는 셈이다.
                 if (!this.router) {
                     this.router = new Router();
                 }
 
+                // 해당 path를 지닌 Route와 Layer로 새 route를 분기시켜 등록하는 것.
                 const route = this.router.route(path);
 
                 // app.get('/', () => {}); 에서 첫 매개변수인 path를 제거한 것.
