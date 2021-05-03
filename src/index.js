@@ -5,7 +5,12 @@ import Application from "./application";
 import { printMessage } from "./util";
 
 const createApplication = () => {
-    const app = new Application();
+    const app = function (req, res, next) {
+        app.handle(req, res, next);
+    };
+
+    Object.assign(app, Application.prototype);
+    Object.assign(app, EventEmitter.prototype);
 
     // req는 감쳐진 속성으로 존재하는 아래 app 객체를 생성한다.
     app.request = Object.create(Req.prototype, {
@@ -25,6 +30,11 @@ const createApplication = () => {
             value: app,
         },
     });
+
+    // Object.assign 등으로 prototype 간의 합성을 하려고 할 때,
+    // new 연산자와 달리 생성자가 실행되지 않기 때문에 methods가 등록이 안된다.
+    // ex) Error : app.get is not a function
+    app.init();
 
     return app;
 };
