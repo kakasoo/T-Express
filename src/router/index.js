@@ -23,7 +23,6 @@ class Router {
 
     handle(req, res, out) {
         const protohost = this.getProtohost(req.url) || "";
-        console.log("protohost : ", protohost);
 
         const options = [];
         const parentParams = req.params;
@@ -39,7 +38,73 @@ class Router {
         req.baseUrl = parentUrl;
         req.originalUrl = req.originalUrl || req.url;
 
-        this.next(req);
+        const next = (err) => {
+            let index = 0;
+            let layerError = err === "route" ? null : err;
+
+            if (this.slashAdded) {
+                req.url = req.url.substr(1);
+                this.slashAdded = false;
+            }
+
+            if (this.removed.length !== 0) {
+                req.baseUrl = parentUrl;
+                req.url =
+                    protohost + this.removed + req.url.substr(protohost.length);
+                this.removed = "";
+            }
+
+            if (layerError === "route") {
+                setImmediate(done, layerError);
+                return;
+            }
+
+            if (index >= this.stack.length) {
+                setImmediate(done, layerError);
+                return;
+            }
+
+            const path = parseUrl(req).pathname;
+
+            let layer;
+            let match;
+            let route;
+
+            while (match !== true && index < this.stack.length) {
+                layer = this.stack[index++];
+                match = layer.match(path);
+                route = layer.route;
+
+                if (typeof match !== "boolean") {
+                    layerError = layerError || match;
+                }
+
+                if (!match) {
+                    continue;
+                }
+
+                if (!route) {
+                    continue;
+                }
+
+                if (layerError) {
+                    match = false;
+                    continue;
+                }
+
+                const method = req.method;
+                const has_method = route.handle(method);
+            }
+
+            if (match !== true) {
+                return done(layerError);
+            }
+
+            if (route) {
+                req.route = route;
+            }
+        };
+        next();
     }
 
     restore(fn, obj) {
@@ -55,53 +120,9 @@ class Router {
             for (let i = 0; i < props.length; i++) {
                 obj[props[i]] = vals[i];
             }
-            return fn.apply(this.arguments);
+
+            return fn.apply(this, arguments);
         };
-    }
-
-    next(req, err) {
-        let index = 0;
-
-        const layerError = err === "route" ? null : err;
-
-        // if(slashAdded) {}
-        // if(removed.length !== 0) {}
-        // if(layerError === 'route') {}
-        // if(index >= stack.length) {}
-
-        const path = parseUrl(req).pathname;
-
-        let layer;
-        let match;
-        let route;
-
-        while (!match && index < this.stack.length) {
-            layer = this.stack[index++];
-            match = layer.match(path);
-            route = layer.route;
-
-            if (typeof match !== "boolean") {
-                layerError = layerError || match;
-            }
-
-            if (!match) {
-                continue;
-            }
-
-            if (!route) {
-                continue;
-            }
-
-            if (layerError) {
-                match = false;
-                continue;
-            }
-
-            const method = req.method;
-            const has_method = route.handle(method);
-
-            // 에러 처리가 필요
-        }
     }
 
     getProtohost(url) {

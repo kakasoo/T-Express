@@ -1,8 +1,14 @@
+import { pathToRegexp } from "path-to-regexp";
+
 class Layer {
     constructor(path, fn, options) {
         this.path = path;
         this.methods = {};
         this.handle = fn;
+
+        this.regexp = pathToRegexp(path, (this.keys = []), options);
+        this.regexp.fast_star = path === "*";
+        this.regexp.fast_slash = path === "/" && options.end === false;
     }
 
     handleMethod(methodName) {
@@ -44,6 +50,33 @@ class Layer {
         } catch (err) {
             next(err);
         }
+    }
+
+    match(path) {
+        let match;
+        if (!path) {
+            // 슬래시 1개만 존재하는 경우, route와 정확히 일치하는 경우
+            // if (this.regexp.fast_slash) {
+            //     this.params = {};
+            //     this.path = "";
+            //     return true;
+            // }
+            // if (this.regexp.fast_star) {
+            // }
+
+            match = this.regexp.exec(path);
+        }
+
+        if (!match) {
+            this.params = undefined;
+            this.path = undefined;
+            return false;
+        }
+
+        this.params = {};
+        this.path = match[0];
+
+        return true;
     }
 }
 

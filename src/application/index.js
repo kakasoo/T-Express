@@ -43,8 +43,6 @@ class Application {
 
     handle(req, res, callback) {
         const router = this.router;
-        console.log("this router : ", router);
-        console.log("this router's handle : ", router.handle);
         const done =
             callback ||
             finalhandler(req, res, {

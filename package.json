@@ -25,7 +25,8 @@
     "homepage": "https://github.com/kakasoo/T-Express#readme",
     "dependencies": {
         "finalhandler": "^1.1.2",
-        "http": "0.0.1-security"
+        "http": "0.0.1-security",
+        "path-to-regexp": "^6.2.0"
     },
     "devDependencies": {
         "@babel/cli": "^7.13.16",
