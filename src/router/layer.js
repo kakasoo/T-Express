@@ -2,7 +2,7 @@ import { pathToRegexp } from "path-to-regexp";
 
 class Layer {
     constructor(path, fn, options) {
-        this.path = path;
+        this.path;
         this.methods = {};
         this.handle = fn;
 
@@ -22,13 +22,13 @@ class Layer {
         return Boolean(this.methods[methodName]);
     }
 
-    handleError(error, req, res, next) {
+    handleError(err, req, res, next) {
         const fn = this.handle;
 
         // function's length is parameter number;
         if (fn.length !== 4) {
             // not a standard request handler
-            return next(error);
+            return next(err);
         }
 
         try {
@@ -38,8 +38,9 @@ class Layer {
         }
     }
 
-    handleRequest() {
+    handleRequest(req, res, next) {
         const fn = this.handle;
+        // (fn.length);
 
         if (fn.length > 3) {
             return next();
@@ -52,20 +53,36 @@ class Layer {
         }
     }
 
+    decode_params(value) {
+        if (typeof value !== "string" || value.length === 0) {
+            return value;
+        }
+
+        try {
+            return decodeURIComponent(value);
+        } catch (err) {
+            if (err instanceof URIError) {
+                err.message = `Failed to decode param '${value}'`;
+                err.status = err.statusCode = 400;
+            }
+            throw err;
+        }
+    }
+
     match(path) {
         let match;
         if (!path) {
             // 슬래시 1개만 존재하는 경우, route와 정확히 일치하는 경우
-            // if (this.regexp.fast_slash) {
-            //     this.params = {};
-            //     this.path = "";
-            //     return true;
-            // }
-            // if (this.regexp.fast_star) {
-            // }
-
-            match = this.regexp.exec(path);
+            if (this.regexp.fast_slash) {
+                this.params = {};
+                this.path = "";
+                return true;
+            }
+            if (this.regexp.fast_star) {
+                this.params = { 0: this.docode_param(path) };
+            }
         }
+        match = this.regexp.exec(path);
 
         if (!match) {
             this.params = undefined;

@@ -46,7 +46,7 @@ export default createApplication;
 
 const app = createApplication();
 
-app.get("/", (req, res, next) => {
+app.get("/", function rootFunc(req, res, next) {
     res.send("hi!");
 });
 
@@ -54,4 +54,6 @@ app.get("/test", (req, res, next) => {
     res.send("hi!");
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+    console.log("server opened.");
+});

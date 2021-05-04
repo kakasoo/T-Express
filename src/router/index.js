@@ -16,14 +16,14 @@ class Router {
 
     route(path) {
         const route = new Route(path);
-        const layer = new Layer(path, route, {});
+        const layer = new Layer(path, route.dispatch.bind(route), {});
+        layer.route = route;
         this.stack.push(layer);
         return route;
     }
 
     handle(req, res, out) {
         const protohost = this.getProtohost(req.url) || "";
-
         const options = [];
         const parentParams = req.params;
         const parentUrl = req.baseUrl || "";
@@ -79,7 +79,7 @@ class Router {
                     layerError = layerError || match;
                 }
 
-                if (!match) {
+                if (match !== true) {
                     continue;
                 }
 
@@ -103,6 +103,7 @@ class Router {
             if (route) {
                 req.route = route;
             }
+            layer.handleRequest(req, res, next);
         };
         next();
     }

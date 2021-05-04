@@ -1,15 +1,19 @@
 import { METHODS } from "http";
+import Layer from "./layer";
 
 class Route {
     constructor(path) {
         this.path = path;
         this.stack = []; // path 단위로 route 된 이후의 stack이므로 메서드 분기를 의미
         this.methods = {};
+
         METHODS.forEach((METHOD) => {
             const method = METHOD.toLowerCase();
 
             // route에서 메서드 단위로 함수를 등록하는 일
-            this[method] = (...handles) => {
+            this[method] = (...fn) => {
+                const handles = fn;
+
                 for (let i = 0; i < handles.length; i++) {
                     const handle = handles[i];
 
@@ -54,7 +58,7 @@ class Route {
             }
 
             // 더 이상 진입할 layer가 없는 경우 ( method가 없는 경우 )
-            const layer = stack[index++];
+            const layer = this.stack[index++];
             if (!layer) {
                 return done(err);
             }
@@ -71,6 +75,15 @@ class Route {
             }
         };
         next();
+    }
+
+    handle(method) {
+        let name = method.toLowerCase();
+        if (name === "head" && !this.method["head"]) {
+            name = "get";
+        }
+
+        return Boolean(this.methods[name]);
     }
 }
 
