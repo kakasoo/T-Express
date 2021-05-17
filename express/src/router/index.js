@@ -15,6 +15,7 @@ class Router {
     }
 
     route(path) {
+        console.log("router's route, path : ", path);
         const route = new Route(path);
         const layer = new Layer(path, route.dispatch.bind(route), {});
         layer.route = route;
@@ -23,6 +24,7 @@ class Router {
     }
 
     handle(req, res, out) {
+        console.log("router's res.send : ", res.send);
         const protohost = this.getProtohost(req.url) || "";
         const options = [];
         const parentParams = req.params;
@@ -30,10 +32,6 @@ class Router {
         const done = this.restore(out, req, "baseUrl", "next", "params");
 
         req.next = this.next;
-
-        // if(req.method === 'OPTIONS') {
-        //     done = wrap
-        // }
 
         req.baseUrl = parentUrl;
         req.originalUrl = req.originalUrl || req.url;
@@ -74,6 +72,8 @@ class Router {
                 layer = this.stack[index++];
                 match = layer.match(path);
                 route = layer.route;
+                // console.log("LAYER : ", layer);
+                // console.log("ROUTE : ", route);
 
                 if (typeof match !== "boolean") {
                     layerError = layerError || match;
@@ -84,6 +84,7 @@ class Router {
                 }
 
                 if (!route) {
+                    console.log("situation 4", done);
                     continue;
                 }
 
@@ -99,6 +100,8 @@ class Router {
             if (match !== true) {
                 return done(layerError);
             }
+
+            console.log("res.send : ", res.send);
 
             if (route) {
                 req.route = route;

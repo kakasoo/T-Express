@@ -1,4 +1,4 @@
-import { pathToRegexp } from "path-to-regexp";
+import pathToRegexp from "path-to-regexp";
 
 class Layer {
     constructor(path, fn, options) {
@@ -41,6 +41,7 @@ class Layer {
     handleRequest(req, res, next) {
         const fn = this.handle;
         // (fn.length);
+        console.log("handleRequest : ", fn, res.send);
 
         if (fn.length > 3) {
             return next();

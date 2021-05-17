@@ -24,9 +24,10 @@
     },
     "homepage": "https://github.com/kakasoo/T-Express#readme",
     "dependencies": {
+        "array.prototype.flat": "^1.2.4",
         "finalhandler": "^1.1.2",
         "http": "0.0.1-security",
-        "path-to-regexp": "^6.2.0"
+        "path-to-regexp": "0.1.7"
     },
     "devDependencies": {
         "@babel/cli": "^7.13.16",

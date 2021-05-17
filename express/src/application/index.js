@@ -1,9 +1,23 @@
-import { METHODS } from "http";
+// import { METHODS } from "http";
+const METHODS = ["get"];
 import http from "http";
 import finalhandler from "finalhandler";
 
 import Router from "../router";
 import { slice, logerror } from "../util";
+
+const middleware = {
+    init: function (app) {
+        return function expressInit(req, res, next) {
+            req.res = res;
+            res.req = req;
+            req.next = next;
+
+            Object.assign(req, app.request);
+            Object.assign(res, app.response);
+        };
+    },
+};
 
 class Application {
     init() {
@@ -52,6 +66,7 @@ class Application {
     }
 
     handle(req, res, callback) {
+        console.log("application res.send : ", res.send);
         const router = this.router;
         const done =
             callback ||
@@ -71,6 +86,10 @@ class Application {
         if (!this.router) {
             this.router = new Router();
         }
+
+        // req,res를 custom req,res로 고치기 위한 작업
+        console.log(this.router);
+        // this.router.use(middleware.init(this));
     }
 
     route(path) {

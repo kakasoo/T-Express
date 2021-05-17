@@ -1,4 +1,5 @@
-import { METHODS } from "http";
+// import { METHODS } from "http";
+const METHODS = ["get"];
 import Layer from "./layer";
 
 class Route {
