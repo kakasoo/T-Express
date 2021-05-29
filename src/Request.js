@@ -1,4 +1,4 @@
-import http from "http";
+const http = require("http");
 
 class Request extends http.IncomingMessage {
     constructor() {
@@ -6,4 +6,4 @@ class Request extends http.IncomingMessage {
     }
 }
 
-export default Request;
+module.exports = Request;

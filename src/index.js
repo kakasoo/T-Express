@@ -1,35 +1,32 @@
-const http = require("http");
-const PORT = 3000;
-
-const { METHODS } = require("http");
-const Router = require("./router.js");
+const Application = require("./application");
+const Request = require("./Request");
+const Response = require("./Response");
 
 const TExpress = () => {
-    const app = (req, res) => {
-        if (!this.router) {
-            throw new Error("No router defined on this app.");
-        }
-        this.router.handle(req, res);
-    };
+    // const app = Application;
 
-    METHODS.forEach((METHOD) => {
-        const method = METHOD.toLowerCase();
-        app[method] = (path, ...callback) => {
-            if (!this.router) {
-                this.router = new Router();
-            }
+    const app = (req, res, next) => app.handle(req, res, next);
+    Object.setPrototypeOf(app, Application);
 
-            const route = this.router.route(path);
-            // route[method] = callback;
-            route[method].apply(route, callback);
-        };
+    app.request = Object.create(Request.prototype, {
+        app: {
+            configurable: true, // 객체의 프로퍼티를 수정하거나 삭제 가능
+            enumerable: true, // 객체 속성 열거 시 노출 여부
+            writable: true, // 할당 연산자로 수정 가능 여부
+            value: app, // 값
+        },
     });
+
+    app.response = Object.create(Response.prototype, {
+        app: {
+            configurable: true, // 객체의 프로퍼티를 수정하거나 삭제 가능
+            enumerable: true, // 객체 속성 열거 시 노출 여부
+            writable: true, // 할당 연산자로 수정 가능 여부
+            value: app, // 값
+        },
+    });
+
     return app;
 };
 
-const app = TExpress(); // TExpress를 만드는 구간
-
-app.get("/", (req, res, next) => res.end("root.")); // TExpress의 메서드 별 함수를 등록하는 구간
-
-const server = http.createServer(app); // 사용자가 들어오는 구간
-server.listen(PORT, () => console.log("Server is opened."));
+module.exports = TExpress;
