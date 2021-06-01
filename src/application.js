@@ -1,6 +1,6 @@
 const { METHODS } = require("http");
-const Middleware = require("./Middleware");
-const Router = require("./Router");
+const Middleware = require("./Middleware/Middleware");
+const Router = require("./Router/Router");
 
 class Application {
     constructor() {
