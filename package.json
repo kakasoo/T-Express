@@ -25,14 +25,14 @@
     },
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/kakasoo/T-Express/issues"
+        "email": "kscodebase@gmail.com"
     },
     "homepage": "https://github.com/kakasoo/T-Express#readme",
     "dependencies": {},
     "devDependencies": {
+        "@babel/cli": "^7.14.3",
+        "@babel/core": "^7.14.3",
+        "@babel/preset-env": "^7.14.4",
         "nodemon": "^2.0.7"
-    },
-    "bugs": {
-        "email": "kscodebase@gmail.com"
     }
 }
