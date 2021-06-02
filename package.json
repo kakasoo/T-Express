@@ -1,5 +1,5 @@
 {
-    "name": "t-express",
+    "name": "@kakasoo/t-express",
     "version": "1.0.0",
     "description": "ES6 style of express.js. Clone coding of server framework.",
     "main": "./dist/index.js",
